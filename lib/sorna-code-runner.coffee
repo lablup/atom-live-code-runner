@@ -2,6 +2,7 @@ SornaCodeRunnerView = require './sorna-code-runner-view'
 {CompositeDisposable} = require 'atom'
 
 module.exports = SornaCodeRunner =
+  config: require('./config.coffee')
   SornaCodeRunnerView: null
   modalPanel: null
   subscriptions: null
@@ -24,6 +25,26 @@ module.exports = SornaCodeRunner =
 
   serialize: ->
     SornaCodeRunnerViewState: @SornaCodeRunnerView.serialize()
+
+  getAccessKey: ->
+    accessKey = atom.config.get 'sorna-code-runner.accessKey'
+    if accessKey
+      accessKey = accessKey.trim()
+    return accessKey
+
+  getSecretKey: ->
+    secretKey = atom.config.get 'sorna-code-runner.secretKey'
+    if secretKey
+      secretKey = secretKey.trim()
+    return secretKey
+
+  checkMandatorySettings: ->
+    missingSettings = []
+    if not @getAccessKey()
+      missingSettings.push("Access Key")
+    if note @getSecretKey()
+      missingSettings.push("Secret Key")
+    return missingSettings.length is 0
 
   runcode: ->
     console.log 'Code runner test!'
