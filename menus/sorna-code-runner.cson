@@ -1,0 +1,21 @@
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Run code via Sorna'
+      'command': 'sorna-code-runner:run'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Sorna Code runner'
+      'submenu': [
+        {
+          'label': 'Run'
+          'command': 'sorna-code-runner:run'
+        }
+      ]
+    ]
+  }
+]
