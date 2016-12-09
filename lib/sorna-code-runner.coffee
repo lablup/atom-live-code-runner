@@ -6,6 +6,7 @@ module.exports = SornaCodeRunner =
   SornaCodeRunnerView: null
   modalPanel: null
   subscriptions: null
+  code: null
 
   activate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
@@ -74,3 +75,20 @@ module.exports = SornaCodeRunner =
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
       @modalPanel.show()
+
+  # TODO
+  getAPIversion: ->
+    return "v1"
+
+  # TODO
+  createKernel: (kernel-type)->
+    return true
+
+  # TODO
+  destroyKernel: ->
+    return true
+
+  # TODO
+  sendCode: ->
+    editor = atom.workspace.getActiveTextEditor()
+    @code = editor.getText()
