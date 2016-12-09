@@ -13,8 +13,8 @@ module.exports = SornaCodeRunner =
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
-    # Register command 
-    @subscriptions.add atom.commands.add 'atom-workspace',
+    # Register command
+    @subscriptions.add atom.commands.add 'atom-text-editor',
       'sorna-code-runner:run': => @runcode()
 
   deactivate: ->
@@ -31,4 +31,7 @@ module.exports = SornaCodeRunner =
     if @modalPanel.isVisible()
       @modalPanel.hide()
     else
+      editor = atom.workspace.getActiveTextEditor()
+      content = editor.getText()
+      @SornaCodeRunnerView.setContent(content)
       @modalPanel.show()

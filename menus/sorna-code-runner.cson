@@ -12,7 +12,7 @@
       'label': 'Sorna Code runner'
       'submenu': [
         {
-          'label': 'Run'
+          'label': 'Run code via Sorna'
           'command': 'sorna-code-runner:run'
         }
       ]
