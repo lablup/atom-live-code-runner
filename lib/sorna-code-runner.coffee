@@ -44,7 +44,25 @@ module.exports = SornaCodeRunner =
       missingSettings.push("Access Key")
     if note @getSecretKey()
       missingSettings.push("Secret Key")
+    if missingSettings.length
+      @notifyMissingMandatorySettings(missingSettings)
     return missingSettings.length is 0
+
+  notifyMissingMandatorySettings: (missingSettings) ->
+    context = this
+    errorMsg = "sorna-code-runner: Mandatory settings missing: " + missingSettings.join(', ')
+
+    notification = atom.notifications.addError errorMsg,
+      dismissable: true
+      buttons: [{
+        text: "Package settings"
+        onDidClick: ->
+          context.goToPackageSettings()
+          notification.dismiss()
+      }]
+
+  goToPackageSettings: ->
+    atom.workspace.open("atom://config/packages/sorna-code-runner")
 
   runcode: ->
     console.log 'Code runner test!'
