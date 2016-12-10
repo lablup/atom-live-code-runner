@@ -15,3 +15,25 @@ Description
  * You are ready to go!
 
 
+Supported Languages
+===================
+
+ * Python 2.7
+ * Python 3.5
+ * TensorFlow 0.11
+ * Caffe
+ * PHP 7
+ * Linux terminal (ubuntu linux based)
+ * Javascript (via V8 engine)
+ * Node.js 4
+ * R 3
+ * Julia
+
+Languages (to be ready soon)
+============================
+
+ * Theano
+ * Keras
+ * C++ (via gcc)
+ * Rust
+ * Swift (via Swift opensource version)
