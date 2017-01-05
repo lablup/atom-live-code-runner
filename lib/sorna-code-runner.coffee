@@ -22,7 +22,6 @@ module.exports = SornaCodeRunner =
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
-    @wordcountView.destroy()
 
   serialize: ->
     SornaCodeRunnerViewState: @SornaCodeRunnerView.serialize()
@@ -81,7 +80,7 @@ module.exports = SornaCodeRunner =
     return "v1"
 
   # TODO
-  createKernel: (kernel-type)->
+  createKernel: (kernelType) ->
     return true
 
   # TODO
