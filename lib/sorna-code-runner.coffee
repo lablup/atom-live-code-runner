@@ -91,3 +91,18 @@ module.exports = SornaCodeRunner =
   sendCode: ->
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
+    requestHeaders = new Headers({
+      "Content-Type": "text/plain",
+      "Content-Length": code.length.toString()})
+
+    var requestInfo = { method: 'POST',
+      headers: requestHeaders,
+      mode: 'cors',
+      cache: 'default'}
+
+    fetch('https://localhost', requestInfo)
+      .then(function(response) {
+        if (response.ok) {
+        }
+        console.log(response);
+      })
