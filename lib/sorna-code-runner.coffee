@@ -74,6 +74,7 @@ module.exports = SornaCodeRunner =
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
       @modalPanel.show()
+    @sendCode()
 
   # TODO
   getAPIversion: ->
@@ -91,18 +92,18 @@ module.exports = SornaCodeRunner =
   sendCode: ->
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
+
     requestHeaders = new Headers({
       "Content-Type": "text/plain",
-      "Content-Length": code.length.toString()})
+      "Content-Length": @code.length.toString()})
 
-    var requestInfo = { method: 'POST',
+    requestInfo =
+      method: 'POST',
       headers: requestHeaders,
       mode: 'cors',
-      cache: 'default'}
+      cache: 'default'
 
     fetch('https://localhost', requestInfo)
-      .then(function(response) {
-        if (response.ok) {
-        }
-        console.log(response);
-      })
+      .then( (response) ->
+        console.log(response)
+      )
