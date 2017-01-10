@@ -12,6 +12,7 @@ module.exports = SornaCodeRunner =
   accessKey: null
   secretKey: null
   signKey: null
+  apiVersion: 'v1.20160915'
   hash_type: 'sha256'
 
   baseURL: 'https://api.sorna.io'
@@ -85,16 +86,17 @@ module.exports = SornaCodeRunner =
       editor = atom.workspace.getActiveTextEditor()
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
-      @modalPanel.show()
+      #@modalPanel.show()
     @sendCode()
+    #@getAPIversion()
 
   # TODO
   getAPIversion: ->
-    t = @getCurrentISO8601Date()
-    k = @getSignKey(@getSecretKey(), t)
+    d = new Date()
+    k = @getSignKey(@getSecretKey())
     requestHeaders = new Headers({
       "Content-Type": "application/json",
-      "X-Sorna-Date": t
+      "X-Sorna-Date": d.toISOString()
     })
 
     requestInfo =
@@ -106,9 +108,8 @@ module.exports = SornaCodeRunner =
     fetch(@baseURL+'/v1', requestInfo)
       .then( (response) ->
         console.log(response)
+        return response.version
       )
-
-    return "v1"
 
   # TODO
   createKernel: (kernelType) ->
@@ -121,26 +122,39 @@ module.exports = SornaCodeRunner =
   # TODO
   sendCode: ->
     editor = atom.workspace.getActiveTextEditor()
-    @code = editor.getText()
-    t = @getCurrentISO8601Date()
+    @code = "AAA"#editor.getText()
+    t = @getCurrentDate()
+    d = new Date()
     @signKey = @getSignKey(@getSecretKey(), t)
+
+    aStr = @getAuthenticationString('POST', '/v1/kernel/aaa', d.toISOString(), @code)
+    sig = @sign(@signKey, 'utf8', aStr, 'hex')
+
     requestHeaders = new Headers({
       "Content-Type": "application/json",
       "Content-Length": @code.length.toString(),
-      "X-Sorna-Date": t})
+      'X-Sorna-Version': @apiVersion,
+      "X-Sorna-Date": d.toISOString(),
+      "Authorization": "Sorna signMethod=HMAC-SHA256, credential=#{@getAccessKey()}:#{sig}"
+      })
 
     requestInfo =
       method: 'POST',
       headers: requestHeaders,
-      mode: 'cors',
       cache: 'default'
+      body: @code
 
-    fetch(@baseURL, requestInfo)
+    fetch(@baseURL + '/v1/kernel/aaa', requestInfo)
       .then( (response) ->
         console.log(response)
       )
 
-  getCurrentISO8601Date: ->
+  getAuthenticationString: (method, queryString, dateValue, bodyValue) ->
+    console.log ( method + '\n' + queryString + '\n' + dateValue + '\n' + 'content-type:application/json' + '\n' + 'x-sorna-version:'+@apiVersion + '\n' + crypto.createHash(@hash_type).update(bodyValue).digest('hex'))
+
+    return ( method + '\n' + queryString + '\n' + dateValue + '\n' + 'content-type:application/json' + '\n' + 'x-sorna-version:'+@apiVersion + '\n' + crypto.createHash(@hash_type).update(bodyValue).digest('hex'))
+
+  getCurrentDate: ->
     now = new Date()
     year = ('0000' + now.getUTCFullYear()).slice(-4)
     month = ('0' + (now.getUTCMonth() + 1)).slice(-2)
@@ -154,9 +168,9 @@ module.exports = SornaCodeRunner =
     hmac.update(msg, 'utf8')
     return hmac.digest(digest_type)
 
-  getSignKey: (secret_key, current_date)->
+  getSignKey: (secret_key) ->
     console.log(secret_key)
-    k1 = @sign(secret_key, 'utf8', current_date, 'binary')
+    k1 = @sign(secret_key, 'utf8', @getCurrentDate(), 'binary')
     k2 = @sign(k1, 'binary', 'api.sorna.io', 'hex')
     console.log(k2)
     return k2
