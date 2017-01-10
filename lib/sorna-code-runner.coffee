@@ -1,5 +1,7 @@
 SornaCodeRunnerView = require './sorna-code-runner-view'
 {CompositeDisposable} = require 'atom'
+crypto = require 'crypto'
+util = require 'util'
 
 module.exports = SornaCodeRunner =
   config: require('./config.coffee')
@@ -7,10 +9,18 @@ module.exports = SornaCodeRunner =
   modalPanel: null
   subscriptions: null
   code: null
+  accessKey: null
+  secretKey: null
+  signKey: null
+  hash_type: 'sha256'
+
+  baseURL: 'https://api.sorna.io'
 
   activate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
     @modalPanel = atom.workspace.addModalPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
+    @accessKey = @getAccessKey()
+    @secretKey = @getSecretKey()
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
@@ -78,6 +88,24 @@ module.exports = SornaCodeRunner =
 
   # TODO
   getAPIversion: ->
+    t = @getCurrentISO8601Date()
+    k = @getSignKey(@secretKey, t)
+    requestHeaders = new Headers({
+      "Content-Type": "application/json",
+      "X-Sorna-Date": t
+    })
+
+    requestInfo =
+      method: 'GET',
+      headers: requestHeaders,
+      mode: 'cors',
+      cache: 'default'
+
+    fetch(@baseURL+'/v1', requestInfo)
+      .then( (response) ->
+        console.log(response)
+      )
+
     return "v1"
 
   # TODO
@@ -92,10 +120,12 @@ module.exports = SornaCodeRunner =
   sendCode: ->
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
-
+    t = @getCurrentISO8601Date()
+    @signKey = @getSignKey(@secretKey, t)
     requestHeaders = new Headers({
-      "Content-Type": "text/plain",
-      "Content-Length": @code.length.toString()})
+      "Content-Type": "application/json",
+      "Content-Length": @code.length.toString(),
+      "X-Sorna-Date": t})
 
     requestInfo =
       method: 'POST',
@@ -103,7 +133,28 @@ module.exports = SornaCodeRunner =
       mode: 'cors',
       cache: 'default'
 
-    fetch('https://localhost', requestInfo)
+    fetch(@baseURL, requestInfo)
       .then( (response) ->
         console.log(response)
       )
+
+  getCurrentISO8601Date: ->
+    now = new Date()
+    year = ('0000' + now.getUTCFullYear()).slice(-4)
+    month = ('0' + (now.getUTCMonth() + 1)).slice(-2)
+    day = ('0' + (now.getUTCDate())).slice(-2)
+    t = year + month + day
+    return t
+
+  sign: (key, key_encoding, msg, digest_type) ->
+    kbuf = new Buffer(key, key_encoding)
+    hmac = crypto.createHmac(@hash_type, kbuf)
+    hmac.update(msg, 'utf8')
+    return hmac.digest(digest_type)
+
+  getSignKey: (secret_key, current_date)->
+    console.log(secret_key)
+    k1 = @sign(secret_key, 'utf8', current_date, 'binary')
+    k2 = @sign(k1, 'binary', 'api.sorna.io', 'hex')
+    console.log(k2)
+    return k2
