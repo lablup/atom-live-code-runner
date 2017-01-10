@@ -54,7 +54,7 @@ module.exports = SornaCodeRunner =
     missingSettings = []
     if not @getAccessKey()
       missingSettings.push("Access Key")
-    if note @getSecretKey()
+    if not @getSecretKey()
       missingSettings.push("Secret Key")
     if missingSettings.length
       @notifyMissingMandatorySettings(missingSettings)
