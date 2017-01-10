@@ -1,12 +1,11 @@
-module.exports = {
-  AccessKey:
+module.exports =
+  accessKey:
     description: 'Access API Key'
     type: 'string'
-    default: ''
+    default: 'test'
     order: 1
-  SecretKey:
+  secretKey:
     description: 'Secret API Key'
     type: 'string'
-    default: ''
+    default: 'test'
     order: 2
-}

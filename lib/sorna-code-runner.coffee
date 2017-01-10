@@ -19,8 +19,7 @@ module.exports = SornaCodeRunner =
   activate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
     @modalPanel = atom.workspace.addModalPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
-    @accessKey = @getAccessKey()
-    @secretKey = @getSecretKey()
+    console.log('Current access key: '+ @getAccessKey())
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
@@ -38,12 +37,14 @@ module.exports = SornaCodeRunner =
 
   getAccessKey: ->
     accessKey = atom.config.get 'sorna-code-runner.accessKey'
+    console.log accessKey
     if accessKey
       accessKey = accessKey.trim()
     return accessKey
 
   getSecretKey: ->
     secretKey = atom.config.get 'sorna-code-runner.secretKey'
+    console.log secretKey
     if secretKey
       secretKey = secretKey.trim()
     return secretKey
@@ -89,7 +90,7 @@ module.exports = SornaCodeRunner =
   # TODO
   getAPIversion: ->
     t = @getCurrentISO8601Date()
-    k = @getSignKey(@secretKey, t)
+    k = @getSignKey(@getSecretKey(), t)
     requestHeaders = new Headers({
       "Content-Type": "application/json",
       "X-Sorna-Date": t
@@ -121,7 +122,7 @@ module.exports = SornaCodeRunner =
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
     t = @getCurrentISO8601Date()
-    @signKey = @getSignKey(@secretKey, t)
+    @signKey = @getSignKey(@getSecretKey(), t)
     requestHeaders = new Headers({
       "Content-Type": "application/json",
       "Content-Length": @code.length.toString(),

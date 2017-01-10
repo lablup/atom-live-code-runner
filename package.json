@@ -3,9 +3,6 @@
   "main": "./lib/sorna-code-runner",
   "version": "0.0.0",
   "description": "Sorna code runner test package",
-  "activationCommands": {
-    "atom-workspace": "sorna:run"
-  },
   "repository": "https://github.com/lablup/sorna-code-runner",
   "license": "MIT",
   "engines": {
