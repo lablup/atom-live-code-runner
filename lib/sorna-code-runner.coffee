@@ -15,7 +15,7 @@ module.exports = SornaCodeRunner =
   apiVersion: 'v1.20160915'
   hash_type: 'sha256'
   baseURL: 'https://api.sorna.io'
-  kernelId: 'test'
+  kernelId: null
 
   activate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
@@ -127,6 +127,8 @@ module.exports = SornaCodeRunner =
           errorMsg = "sorna-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg,
             dismissable: true
+        else
+          @kernelId = response.kernelId
         return true
       , (e) ->
       )
@@ -174,6 +176,12 @@ module.exports = SornaCodeRunner =
 
   # TODO
   sendCode: ->
+    if @kernelId is null
+      @createKernel()
+      msg = "sorna-code-runner: preparing kernel..."
+      notification = atom.notifications.addInfo msg,
+        dismissable: true
+      return true
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
     requestBody = {
