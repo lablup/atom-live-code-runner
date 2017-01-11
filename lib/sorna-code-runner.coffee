@@ -87,7 +87,8 @@ module.exports = SornaCodeRunner =
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
       #@modalPanel.show()
-    @sendCode()
+    @createKernel('python3')
+    #@sendCode()
     #@getAPIversion()
 
   # TODO
@@ -113,48 +114,84 @@ module.exports = SornaCodeRunner =
 
   # TODO
   createKernel: (kernelType) ->
-    return true
+    requestBody =
+      "lang": "python3",
+      "resourceLimits":
+        "maxMem": 51240,
+        "timeout": 5000
+    requestInfo = @newRequest('POST', '/v1/kernel/create', requestBody)
+    fetch(@baseURL + '/v1/kernel/create', requestInfo)
+      .then( (response) ->
+        console.log(response)
+        if response.ok is false
+          errorMsg = "sorna-code-runner: " + response.statusText
+          notification = atom.notifications.addError errorMsg,
+            dismissable: true
+        return true
+      , (e) ->
+      )
 
   # TODO
-  destroyKernel: ->
-    return true
+  destroyKernel: (kernelId) ->
+    requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
+    fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
+      .then( (response) ->
+        console.log(response)
+        if response.ok is false
+          errorMsg = "sorna-code-runner: " + response.statusText
+          notification = atom.notifications.addError errorMsg,
+            dismissable: true
+        return true
+      , (e) ->
+        return false
+      )
 
-
-  # TODO
-  sendCode: ->
-    editor = atom.workspace.getActiveTextEditor()
-    @code = editor.getText()
+  newRequest: (method, queryString, body) ->
     d = new Date()
     t = @getCurrentDate(d)
     @signKey = @getSignKey(@getSecretKey(), d)
-    requestBody = {
-      "codeId": "test",
-      "code": @code
-    }
-    aStr = @getAuthenticationString('POST', '/v1/kernel/' + @kernelId, d.toISOString(), JSON.stringify(requestBody))
+    if body is null
+      requestBody = ''
+    else
+      requestBody = JSON.stringify(body)
+    aStr = @getAuthenticationString('POST', queryString, d.toISOString(), requestBody)
     sig = @sign(@signKey, 'binary', aStr, 'hex')
 
     requestHeaders = new Headers({
       "Content-Type": "application/json",
-      "Content-Length": @code.length.toString(),
+      "Content-Length": requestBody.length.toString(),
       'X-Sorna-Version': @apiVersion,
       "X-Sorna-Date": d.toISOString(),
       "Authorization": "Sorna signMethod=HMAC-SHA256, credential=#{@getAccessKey()}:#{sig}"
       })
 
     requestInfo =
-      method: 'POST',
+      method: method,
       headers: requestHeaders,
       cache: 'default'
-      body: JSON.stringify(requestBody)
+      body: requestBody
+    return requestInfo
 
+  # TODO
+  sendCode: ->
+    editor = atom.workspace.getActiveTextEditor()
+    @code = editor.getText()
+    requestBody = {
+      "codeId": "test",
+      "code": @code
+    }
+    requestInfo = @newRequest('POST', '/v1/kernel/'+ @kernelId, requestBody)
     fetch(@baseURL + '/v1/kernel/' + @kernelId, requestInfo)
       .then( (response) ->
         console.log(response)
+        if response.ok is false
+          errorMsg = "sorna-code-runner: " + response.statusText
+          notification = atom.notifications.addError errorMsg,
+            dismissable: true
+        return true
       )
 
   getAuthenticationString: (method, queryString, dateValue, bodyValue) ->
-
     return ( method + '\n' + queryString + '\n' + dateValue + '\n' + 'host:api.sorna.io'+ '\n'+'content-type:application/json' + '\n' + 'x-sorna-version:'+@apiVersion + '\n' + crypto.createHash(@hash_type).update(bodyValue).digest('hex'))
 
   getCurrentDate: (now) ->
