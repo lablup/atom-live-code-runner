@@ -1,7 +1,7 @@
 {
   "name": "sorna-code-runner",
   "main": "./lib/sorna-code-runner",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Sorna code runner test package",
   "repository": "https://github.com/lablup/sorna-code-runner",
   "license": "MIT",

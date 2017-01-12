@@ -36,7 +36,7 @@ module.exports = SornaCodeRunner =
 
   realActivate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
+    @modalPanel = atom.workspace.addFooterPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
     console.log('Current access key: '+ @getAccessKey())
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
@@ -53,14 +53,12 @@ module.exports = SornaCodeRunner =
 
   getAccessKey: ->
     accessKey = atom.config.get 'sorna-code-runner.accessKey'
-    console.log accessKey
     if accessKey
       accessKey = accessKey.trim()
     return accessKey
 
   getSecretKey: ->
     secretKey = atom.config.get 'sorna-code-runner.secretKey'
-    console.log secretKey
     if secretKey
       secretKey = secretKey.trim()
     return secretKey
@@ -102,8 +100,8 @@ module.exports = SornaCodeRunner =
       @SornaCodeRunnerView.setContent(content)
       #@modalPanel.show()
     #@createKernel('python3')
-    #@sendCode()
-    @getAPIversion()
+    @sendCode()
+    #@getAPIversion()
 
   # TODO
   getAPIversion: ->
@@ -128,28 +126,41 @@ module.exports = SornaCodeRunner =
       )
 
   # TODO
-  createKernel: (kernelType) ->
+  createKernel: (kernelType, cb = null) ->
+    parentObj = @
+    msg = "sorna-code-runner: preparing kernel..."
+    notification = atom.notifications.addInfo msg
     requestBody =
-      "lang": "python3",
+      "lang": kernelType,
+      "clientSessionToken": "test-sorna-code-runner",
       "resourceLimits":
-        "maxMem": 51240,
-        "timeout": 5000
+        "maxMem": 0,
+        "timeout": 0
     requestInfo = @newRequest('POST', '/v1/kernel/create', requestBody)
     fetch(@baseURL + '/v1/kernel/create', requestInfo)
       .then( (response) ->
-        console.log(response)
         if response.ok is false
           errorMsg = "sorna-code-runner: " + response.statusText
-          notification = atom.notifications.addError errorMsg,
-            dismissable: true
-        else
-          @kernelId = response.kernelId
+          notification = atom.notifications.addError errorMsg, dismissable: true
+        else if response.status is 201
+          response.json().then( (json) ->
+            console.debug "Kernel ID: " + json.kernelId
+            parentObj.kernelId = json.kernelId
+            msg = "sorna-code-runner: kernel prepared."
+            notification = atom.notifications.addInfo msg
+            setTimeout ->
+              notification.dismiss()
+            , 1000
+          )
         return true
       , (e) ->
       )
 
   # TODO
   destroyKernel: (kernelId) ->
+    msg = "sorna-code-runner: destroying kernel..."
+    notification = atom.notifications.addInfo msg,
+      dismissable: true
     requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
     fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
       .then( (response) ->
@@ -192,11 +203,10 @@ module.exports = SornaCodeRunner =
   # TODO
   sendCode: ->
     if @kernelId is null
-      @createKernel()
-      msg = "sorna-code-runner: preparing kernel..."
-      notification = atom.notifications.addInfo msg,
-        dismissable: true
+      @createKernel('python3')
       return true
+    msg = "sorna-code-runner: running..."
+    notification = atom.notifications.addInfo msg, dismissable: false
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
     requestBody = {
@@ -205,12 +215,23 @@ module.exports = SornaCodeRunner =
     }
     requestInfo = @newRequest('POST', '/v1/kernel/'+ @kernelId, requestBody)
     fetch(@baseURL + '/v1/kernel/' + @kernelId, requestInfo)
-      .then( (response) ->
-        console.log(response)
+      .then( (response) =>
+        console.debug response
         if response.ok is false
           errorMsg = "sorna-code-runner: " + response.statusText
-          notification = atom.notifications.addError errorMsg,
-            dismissable: true
+          notification = atom.notifications.addError errorMsg, dismissable: false
+          if response.status is 404
+            @createKernel('python3')
+        else
+          msg = "sorna-code-runner: completed."
+          notification = atom.notifications.addInfo msg, dismissable: false
+          response.json().then( (json) =>
+            @SornaCodeRunnerView.setContent('<pre>'+json.result.stdout+'</pre>')
+            @modalPanel.show()
+          )
+        setTimeout ->
+          notification.dismiss()
+        , 1000
         return true
       )
 
