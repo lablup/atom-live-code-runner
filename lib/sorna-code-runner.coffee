@@ -17,7 +17,24 @@ module.exports = SornaCodeRunner =
   baseURL: 'https://api.sorna.io'
   kernelId: null
 
+  # dev mode for autoreload-package-service
+  consumeAutoreload: (reloader) ->
+    reloader(pkg:"sorna-code-runner",files:["package.json"],folders:["lib/"])
+
   activate: (state) ->
+    if atom.inDevMode()
+      try
+        @realActivate(state)
+      catch e
+        console.log e
+    else
+      @realActivate(state)
+
+  deactivate: ->
+    @modalPanel.destroy()
+    @subscriptions.dispose()
+
+  realActivate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
     @modalPanel = atom.workspace.addModalPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
     console.log('Current access key: '+ @getAccessKey())
@@ -29,10 +46,7 @@ module.exports = SornaCodeRunner =
     # Register command
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'sorna-code-runner:run': => @runcode()
-
-  deactivate: ->
-    @modalPanel.destroy()
-    @subscriptions.dispose()
+    console.log "loaded"
 
   serialize: ->
     SornaCodeRunnerViewState: @SornaCodeRunnerView.serialize()
@@ -87,14 +101,13 @@ module.exports = SornaCodeRunner =
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
       #@modalPanel.show()
-    @createKernel('python3')
+    #@createKernel('python3')
     #@sendCode()
-    #@getAPIversion()
+    @getAPIversion()
 
   # TODO
   getAPIversion: ->
     d = new Date()
-    k = @getSignKey(@getSecretKey())
     requestHeaders = new Headers({
       "Content-Type": "application/json",
       "X-Sorna-Date": d.toISOString()
@@ -108,8 +121,10 @@ module.exports = SornaCodeRunner =
 
     fetch(@baseURL+'/v1', requestInfo)
       .then( (response) ->
-        console.log(response)
-        return response.version
+        if response.version
+          console.log('API version: ' + response.version)
+          return response.version
+        return true
       )
 
   # TODO
