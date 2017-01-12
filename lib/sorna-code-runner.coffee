@@ -16,6 +16,7 @@ module.exports = SornaCodeRunner =
   hash_type: 'sha256'
   baseURL: 'https://api.sorna.io'
   kernelId: null
+  kernelType: null
 
   # dev mode for autoreload-package-service
   consumeAutoreload: (reloader) ->
@@ -152,16 +153,16 @@ module.exports = SornaCodeRunner =
 
   destroyKernel: (kernelId) ->
     msg = "sorna-code-runner: destroying kernel..."
-    notification = atom.notifications.addInfo msg,
-      dismissable: true
+    notification = atom.notifications.addInfo msg
     requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
-    fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
+    return fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
       .then( (response) ->
         console.log(response)
         if response.ok is false
-          errorMsg = "sorna-code-runner: " + response.statusText
+          errorMsg = "sorna-code-runner: destroy failed - " + response.statusText
           notification = atom.notifications.addError errorMsg,
             dismissable: true
+          return false
         return true
       , (e) ->
         return false
@@ -195,7 +196,7 @@ module.exports = SornaCodeRunner =
       requestBody = ''
     else
       requestBody = JSON.stringify(body)
-    aStr = @getAuthenticationString('POST', queryString, d.toISOString(), requestBody)
+    aStr = @getAuthenticationString(method, queryString, d.toISOString(), requestBody)
     sig = @sign(@signKey, 'binary', aStr, 'hex')
 
     requestHeaders = new Headers({
@@ -213,14 +214,55 @@ module.exports = SornaCodeRunner =
       body: requestBody
     return requestInfo
 
+  chooseKernelType: ->
+    editor = atom.workspace.getActiveTextEditor()
+    if editor
+      grammar = editor.getGrammar()
+    else
+      grammar = null
+    if grammar
+      grammarName = (grammar.name || grammar.scopeName).toLowerCase()
+      switch grammarName
+        when "python"
+          code = editor.getText()
+          if code.search("tensorflow") > 0
+            kernelName = "tensorflow-python3"
+          else
+            kernelName = "python3"
+        when "r" then kernelName = "r3"
+        when "julia" then kernelName = "julia"
+        when "lua" then kernelName = "lua5"
+        when "php" then kernelName = "php7"
+        when "haskell" then kernelName = "haskell"
+        when "nodejs", "javascript" then kernelName = "nodejs4"
+        else kernelName = "python3"
+      console.log "Kernel Language: "+ kernelName
+      return kernelName
+
   sendCode: ->
-    if @kernelId is null
-      console.log 'null kernel'
-      createAndRun = @createKernel('python3').then( (result) =>
-        if result is true
-          return @sendCode()
-      )
-      return true
+    kernelType = @chooseKernelType()
+    if kernelType isnt @kernelType or @kernelId is null
+      if @kernelId isnt null
+        destroyAndCreateAndRun = @destroyKernel(@kernelId)
+        .then( (result) =>
+          if result is true
+            return @createKernel(kernelType)
+          else
+            return false
+        )
+        .then( (result) =>
+          if result is true
+            @kernelType = kernelType
+            return @sendCode()
+        )
+        return true
+      else
+        createAndRun = @createKernel(kernelType).then( (result) =>
+          if result is true
+            @kernelType = kernelType
+            return @sendCode()
+        )
+        return true
     msg = "sorna-code-runner: running..."
     notification = atom.notifications.addInfo msg, dismissable: false
     editor = atom.workspace.getActiveTextEditor()
@@ -237,7 +279,7 @@ module.exports = SornaCodeRunner =
           errorMsg = "sorna-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg, dismissable: false
           if response.status is 404
-            @createKernel('python3')
+            @createKernel(@kernelType)
         else
           msg = "sorna-code-runner: completed."
           notification = atom.notifications.addSuccess msg, dismissable: false

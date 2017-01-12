@@ -36,6 +36,7 @@ class SornaCodeRunnerView
     @caller.resultPanel.hide()
 
   refreshKernel: =>
+    @clearView()
     @caller.refreshKernel()
 
   clearView: ->
