@@ -5,16 +5,19 @@ class SornaCodeRunnerView
     # Create root element
     @element = document.createElement('div')
     @element.classList.add('sorna-code-runner')
-    @element.style.width = '100%'
 
     # Create message element
+    errorMessage = document.createElement('div')
+    errorMessage.classList.add('sorna-code-runner-error-message')
+    @element.appendChild(errorMessage)
+
     message = document.createElement('div')
-    #message.textContent = "Sorna code runner ready!"
     message.classList.add('message')
     @element.appendChild(message)
+
+
     buttonArea = document.createElement('div')
     buttonArea.classList.add('sorna-code-runner-buttons')
-
     closeButton = document.createElement('span')
     closeButton.addEventListener('click', @closeView.bind(@))
     closeButton.classList.add('icon')
@@ -23,20 +26,27 @@ class SornaCodeRunnerView
     refreshButton.addEventListener('click', @refreshKernel.bind(@))
     refreshButton.classList.add('icon')
     refreshButton.classList.add('icon-repo-sync')
-
     buttonArea.appendChild(refreshButton)
     buttonArea.appendChild(closeButton)
 
     @element.appendChild(buttonArea)
 
   closeView: =>
+    @clearView()
     @caller.resultPanel.hide()
 
   refreshKernel: =>
     @caller.refreshKernel()
 
+  clearView: ->
+     @element.children[1].innerHTML = ''
+     @element.children[0].textContent = ''
+
   setContent: (content) ->
-     @element.children[0].innerHTML = content
+     @element.children[1].innerHTML = content
+
+  setErrorMessage: (content) ->
+     @element.children[0].textContent = content
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->

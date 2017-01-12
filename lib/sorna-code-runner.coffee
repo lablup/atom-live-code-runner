@@ -130,11 +130,12 @@ module.exports = SornaCodeRunner =
         "maxMem": 0,
         "timeout": 0
     requestInfo = @newRequest('POST', '/v1/kernel/create', requestBody)
-    fetch(@baseURL + '/v1/kernel/create', requestInfo)
+    return fetch(@baseURL + '/v1/kernel/create', requestInfo)
       .then( (response) ->
         if response.ok is false
           errorMsg = "sorna-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg, dismissable: true
+          return false
         else if response.status is 201
           response.json().then( (json) ->
             console.debug "Kernel ID: " + json.kernelId
@@ -144,8 +145,8 @@ module.exports = SornaCodeRunner =
             setTimeout ->
               notification.dismiss()
             , 1000
+            return true
           )
-        return true
       , (e) ->
       )
 
@@ -168,16 +169,23 @@ module.exports = SornaCodeRunner =
 
   refreshKernel: ->
     msg = "sorna-code-runner: refreshing kernel..."
-    notification = atom.notifications.addInfo msg, dismissable: true
-    if @kernelId
-      destroyAndCreate = new Promise(
-        @destroyKernel(@kernelId)
-      ).then(
-        @createKernel('python3')
+    notification = atom.notifications.addInfo msg
+    requestInfo = @newRequest('PATCH', '/v1/kernel/'+@kernelId, null)
+    fetch(@baseURL + '/v1/kernel/'+@kernelId, requestInfo)
+      .then( (response) ->
+        console.log(response)
+        if response.ok is false
+          errorMsg = "sorna-code-runner: " + response.statusText
+          notification = atom.notifications.addError errorMsg,
+            dismissable: true
+        else
+          if response.status isnt 404
+            msg = "sorna-code-runner: kernel refreshed"
+            notification = atom.notifications.addSuccess msg
+        return true
+      , (e) ->
+        return false
       )
-      destroyAndCreate()
-    else
-      createKernel('python3')
 
   newRequest: (method, queryString, body) ->
     d = new Date()
@@ -207,7 +215,11 @@ module.exports = SornaCodeRunner =
 
   sendCode: ->
     if @kernelId is null
-      @createKernel('python3')
+      console.log 'null kernel'
+      createAndRun = @createKernel('python3').then( (result) =>
+        if result is true
+          return @sendCode()
+      )
       return true
     msg = "sorna-code-runner: running..."
     notification = atom.notifications.addInfo msg, dismissable: false
@@ -230,7 +242,19 @@ module.exports = SornaCodeRunner =
           msg = "sorna-code-runner: completed."
           notification = atom.notifications.addSuccess msg, dismissable: false
           response.json().then( (json) =>
-            @SornaCodeRunnerView.setContent('<pre>'+json.result.stdout+'</pre>')
+            buffer = ''
+            if json.result.media
+              for m in json.result.media
+                if m[0] is "image/svg+xml"
+                  buffer = buffer + m[1]
+            if json.result.stdout
+              buffer = buffer + '<br /><pre>'+json.result.stdout+'</pre>'
+            if json.result.exceptions and json.result.exceptions.length > 0
+              errBuffer = ''
+              for exception in json.result.exceptions
+                errBuffer = errBuffer + exception[0] + '(' + exception[1].join(', ') + ')'
+              @SornaCodeRunnerView.setErrorMessage(errBuffer)
+            @SornaCodeRunnerView.setContent(buffer)
             @resultPanel.show()
           )
         setTimeout ->
