@@ -159,10 +159,13 @@ module.exports = SornaCodeRunner =
       .then( (response) ->
         console.log(response)
         if response.ok is false
-          errorMsg = "sorna-code-runner: destroy failed - " + response.statusText
-          notification = atom.notifications.addError errorMsg,
-            dismissable: true
-          return false
+          if response.status isnt 404
+            errorMsg = "sorna-code-runner: destroy failed - " + response.statusText
+            notification = atom.notifications.addError errorMsg,
+              dismissable: true
+            return false
+          else
+            return true
         return true
       , (e) ->
         return false
