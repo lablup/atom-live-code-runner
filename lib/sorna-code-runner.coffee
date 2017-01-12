@@ -6,7 +6,7 @@ util = require 'util'
 module.exports = SornaCodeRunner =
   config: require('./config.coffee')
   SornaCodeRunnerView: null
-  modalPanel: null
+  resultPanel: null
   subscriptions: null
   code: null
   accessKey: null
@@ -31,12 +31,12 @@ module.exports = SornaCodeRunner =
       @realActivate(state)
 
   deactivate: ->
-    @modalPanel.destroy()
+    @resultPanel.destroy()
     @subscriptions.dispose()
 
   realActivate: (state) ->
-    @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState)
-    @modalPanel = atom.workspace.addFooterPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
+    @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState, @)
+    @resultPanel = atom.workspace.addBottomPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
     console.log('Current access key: '+ @getAccessKey())
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
@@ -90,20 +90,14 @@ module.exports = SornaCodeRunner =
     atom.workspace.open("atom://config/packages/sorna-code-runner")
 
   runcode: ->
-    console.log 'Code runner test!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
+    if @resultPanel.isVisible()
+      @resultPanel.hide()
     else
       editor = atom.workspace.getActiveTextEditor()
       content = editor.getText()
       @SornaCodeRunnerView.setContent(content)
-      #@modalPanel.show()
-    #@createKernel('python3')
     @sendCode()
-    #@getAPIversion()
 
-  # TODO
   getAPIversion: ->
     d = new Date()
     requestHeaders = new Headers({
@@ -125,8 +119,7 @@ module.exports = SornaCodeRunner =
         return true
       )
 
-  # TODO
-  createKernel: (kernelType, cb = null) ->
+  createKernel: (kernelType) ->
     parentObj = @
     msg = "sorna-code-runner: preparing kernel..."
     notification = atom.notifications.addInfo msg
@@ -147,7 +140,7 @@ module.exports = SornaCodeRunner =
             console.debug "Kernel ID: " + json.kernelId
             parentObj.kernelId = json.kernelId
             msg = "sorna-code-runner: kernel prepared."
-            notification = atom.notifications.addInfo msg
+            notification = atom.notifications.addSuccess msg
             setTimeout ->
               notification.dismiss()
             , 1000
@@ -156,7 +149,6 @@ module.exports = SornaCodeRunner =
       , (e) ->
       )
 
-  # TODO
   destroyKernel: (kernelId) ->
     msg = "sorna-code-runner: destroying kernel..."
     notification = atom.notifications.addInfo msg,
@@ -173,6 +165,19 @@ module.exports = SornaCodeRunner =
       , (e) ->
         return false
       )
+
+  refreshKernel: ->
+    msg = "sorna-code-runner: refreshing kernel..."
+    notification = atom.notifications.addInfo msg, dismissable: true
+    if @kernelId
+      destroyAndCreate = new Promise(
+        @destroyKernel(@kernelId)
+      ).then(
+        @createKernel('python3')
+      )
+      destroyAndCreate()
+    else
+      createKernel('python3')
 
   newRequest: (method, queryString, body) ->
     d = new Date()
@@ -200,7 +205,6 @@ module.exports = SornaCodeRunner =
       body: requestBody
     return requestInfo
 
-  # TODO
   sendCode: ->
     if @kernelId is null
       @createKernel('python3')
@@ -224,10 +228,10 @@ module.exports = SornaCodeRunner =
             @createKernel('python3')
         else
           msg = "sorna-code-runner: completed."
-          notification = atom.notifications.addInfo msg, dismissable: false
+          notification = atom.notifications.addSuccess msg, dismissable: false
           response.json().then( (json) =>
             @SornaCodeRunnerView.setContent('<pre>'+json.result.stdout+'</pre>')
-            @modalPanel.show()
+            @resultPanel.show()
           )
         setTimeout ->
           notification.dismiss()
