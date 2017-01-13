@@ -2,10 +2,10 @@ module.exports =
   accessKey:
     description: 'Access API Key'
     type: 'string'
-    default: 'test'
+    default: ''
     order: 1
   secretKey:
     description: 'Secret API Key'
     type: 'string'
-    default: 'test'
+    default: ''
     order: 2
