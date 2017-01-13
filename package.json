@@ -1,7 +1,7 @@
 {
   "name": "sorna-code-runner",
   "main": "./lib/sorna-code-runner",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Run program code via Sorna Cloud API service (https://cloud.sorna.io)",
   "repository": "https://github.com/lablup/sorna-code-runner",
   "license": "MIT",
