@@ -1,13 +1,16 @@
 {
   "name": "sorna-code-runner",
   "main": "./lib/sorna-code-runner",
-  "version": "0.0.1",
-  "description": "Sorna code runner test package",
+  "version": "0.1.0",
+  "description": "Run program code via Sorna Cloud API service (https://cloud.sorna.io)",
   "repository": "https://github.com/lablup/sorna-code-runner",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
+    "language-r": ">=0.4.0",
+    "language-haskell": ">=1.10.0",
+    "language-julia": ">=0.10.0"
   }
 }
