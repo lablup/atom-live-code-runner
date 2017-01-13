@@ -51,3 +51,9 @@ Languages (to be ready soon)
  * Caffe
  * Keras
  * C++ (via gcc)
+
+Troubleshooting
+===============
+
+ 1. My language is not recognized
+  * Make sure that language name of your code is correctly recognized by ATOM. You can see the grammar of current editor at the right side of bottom bar. If your language is not supported by ATOM, please install language support packages. For instance, install `language-r` package to add R language support.

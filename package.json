@@ -9,8 +9,5 @@
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
-    "language-r": ">=0.4.0",
-    "language-haskell": ">=1.10.0",
-    "language-julia": ">=0.10.0"
   }
 }
