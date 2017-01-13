@@ -38,7 +38,6 @@ module.exports = SornaCodeRunner =
   realActivate: (state) ->
     @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState, @)
     @resultPanel = atom.workspace.addBottomPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
-    console.log('Current access key: '+ @getAccessKey())
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
@@ -47,7 +46,6 @@ module.exports = SornaCodeRunner =
     # Register command
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'sorna-code-runner:run': => @runcode()
-    console.log "loaded"
 
   serialize: ->
     SornaCodeRunnerViewState: @SornaCodeRunnerView.serialize()
@@ -157,7 +155,6 @@ module.exports = SornaCodeRunner =
     requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
     return fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
       .then( (response) ->
-        console.log(response)
         if response.ok is false
           if response.status isnt 404
             errorMsg = "sorna-code-runner: destroy failed - " + response.statusText
@@ -177,7 +174,6 @@ module.exports = SornaCodeRunner =
     requestInfo = @newRequest('PATCH', '/v1/kernel/'+@kernelId, null)
     fetch(@baseURL + '/v1/kernel/'+@kernelId, requestInfo)
       .then( (response) ->
-        console.log(response)
         if response.ok is false
           errorMsg = "sorna-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg,
@@ -238,12 +234,17 @@ module.exports = SornaCodeRunner =
         when "php" then kernelName = "php7"
         when "haskell" then kernelName = "haskell"
         when "nodejs", "javascript" then kernelName = "nodejs4"
-        else kernelName = "python3"
+        else kernelName = null
       console.log "Kernel Language: "+ kernelName
       return kernelName
 
   sendCode: ->
     kernelType = @chooseKernelType()
+    if kernelType is null
+      errorMsg = "sorna-code-runner: language is not specified by Atom."
+      notification = atom.notifications.addError errorMsg, dismissable: true,
+      description: 'Check the grammar indicator at bottom bar and make sure that it is correctly recoginzed (NOT `Plain Text`).\nTry one of the followings:\n * Save current editor with proper file extension.\n * Install extra lauguage support package. (e.g. `language-r`, `language-haskell`)'
+      return false
     if kernelType isnt @kernelType or @kernelId is null
       if @kernelId isnt null
         destroyAndCreateAndRun = @destroyKernel(@kernelId)
@@ -277,7 +278,6 @@ module.exports = SornaCodeRunner =
     requestInfo = @newRequest('POST', '/v1/kernel/'+ @kernelId, requestBody)
     fetch(@baseURL + '/v1/kernel/' + @kernelId, requestInfo)
       .then( (response) =>
-        console.debug response
         if response.ok is false
           errorMsg = "sorna-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg, dismissable: false
