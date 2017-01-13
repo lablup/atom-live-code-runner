@@ -74,9 +74,9 @@ module.exports = SornaCodeRunner =
 
   notifyMissingMandatorySettings: (missingSettings) ->
     context = this
-    errorMsg = "sorna-code-runner: Mandatory settings missing: " + missingSettings.join(', ')
+    errorMsg = "sorna-code-runner: Please input following settings: " + missingSettings.join(', ')
 
-    notification = atom.notifications.addError errorMsg,
+    notification = atom.notifications.addInfo errorMsg,
       dismissable: true
       buttons: [{
         text: "Package settings"
