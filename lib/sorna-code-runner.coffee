@@ -1,3 +1,7 @@
+###
+Sorna-code-runner
+©2016-2017 Lablup Inc.
+###
 SornaCodeRunnerView = require './sorna-code-runner-view'
 {CompositeDisposable} = require 'atom'
 crypto = require 'crypto'
