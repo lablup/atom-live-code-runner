@@ -3,7 +3,7 @@
   "main": "./lib/atom-live-code-runner",
   "version": "1.2.0",
   "description": "Run program code via Sorna Cloud API service (https://cloud.sorna.io)",
-  "repository": "https://github.com/lablup/sorna-code-runner",
+  "repository": "https://github.com/lablup/atom-live-code-runner",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"

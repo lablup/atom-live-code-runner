@@ -125,8 +125,9 @@ module.exports = AtomLiveCodeRunner =
 
   createKernel: (kernelType) ->
     parentObj = @
-    msg = "atom-live-code-runner: preparing kernel..."
-    notification = atom.notifications.addInfo msg
+    msg = "Preparing kernel..."
+    @AtomLiveCodeRunnerView.addConsoleMessage(msg)
+    #notification = atom.notifications.addInfo msg
     requestBody =
       "lang": kernelType,
       "clientSessionToken": "test-atom-live-code-runner",
@@ -155,8 +156,9 @@ module.exports = AtomLiveCodeRunner =
       )
 
   destroyKernel: (kernelId) ->
-    msg = "atom-live-code-runner: destroying kernel..."
-    notification = atom.notifications.addInfo msg
+    msg = "Destroying kernel..."
+    @AtomLiveCodeRunnerView.addConsoleMessage(msg)
+    #notification = atom.notifications.addInfo msg
     requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
     return fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
       .then( (response) ->
@@ -174,8 +176,9 @@ module.exports = AtomLiveCodeRunner =
       )
 
   refreshKernel: ->
-    msg = "atom-live-code-runner: refreshing kernel..."
-    notification = atom.notifications.addInfo msg
+    msg = "Refreshing kernel..."
+    @AtomLiveCodeRunnerView.addConsoleMessage(msg)
+    #notification = atom.notifications.addInfo msg
     requestInfo = @newRequest('PATCH', '/v1/kernel/'+@kernelId, null)
     fetch(@baseURL + '/v1/kernel/'+@kernelId, requestInfo)
       .then( (response) ->
@@ -272,8 +275,10 @@ module.exports = AtomLiveCodeRunner =
             return @sendCode()
         )
         return true
-    msg = "atom-live-code-runner: running..."
-    notification = atom.notifications.addInfo msg, dismissable: false
+    @resultPanel.show()
+    msg = "Running..."
+    @AtomLiveCodeRunnerView.addConsoleMessage(msg)
+    #notification = atom.notifications.addInfo msg, dismissable: false
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
     requestBody = {
@@ -305,7 +310,6 @@ module.exports = AtomLiveCodeRunner =
                 errBuffer = errBuffer + exception[0] + '(' + exception[1].join(', ') + ')'
               @AtomLiveCodeRunnerView.setErrorMessage(errBuffer)
             @AtomLiveCodeRunnerView.setContent(buffer)
-            @resultPanel.show()
           )
         setTimeout ->
           notification.dismiss()
