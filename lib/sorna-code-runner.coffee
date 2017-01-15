@@ -1,6 +1,7 @@
 ###
 Sorna-code-runner
-©2016-2017 Lablup Inc.
+(C) Copyright 2016-2017 Lablup Inc.
+Licensed under MIT
 ###
 SornaCodeRunnerView = require './sorna-code-runner-view'
 {CompositeDisposable} = require 'atom'
