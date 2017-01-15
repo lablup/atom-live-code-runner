@@ -5,7 +5,7 @@ ATOM package to run code snippets via Sorna Cloud API server (https://cloud.sorn
 Description
 ===========
 
- `atom-live-code-runner` is ATOM editor package to add remote code execution feature using [Sorna Cloud API Service](https://cloud.sorna.io). `atom-live-code-runner` uses [Sorna framework](http://sorna.io) and [Sorna API](http://docs.sorna.io)). Currently, Sorna supports 11 programming languages now.
+ `atom-live-code-runner` is ATOM editor package to add remote code execution feature using [Sorna Cloud API Service](https://cloud.sorna.io). `atom-live-code-runner` uses [Sorna framework](http://sorna.io) and [Sorna API](http://docs.sorna.io). Currently, Sorna supports 11 programming languages now.
 
 You can run your code (or code snippet) without installing or setting any programming environment  with this package. All you need to run code is
 
