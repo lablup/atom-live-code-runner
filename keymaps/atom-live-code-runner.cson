@@ -1,0 +1,2 @@
+'atom-workspace':
+  'ctrl-alt-p': 'atom-live-code-runner:run'

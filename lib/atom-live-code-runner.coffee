@@ -1,16 +1,16 @@
 ###
-Sorna-code-runner
+atom-live-code-runner
 (C) Copyright 2016-2017 Lablup Inc.
 Licensed under MIT
 ###
-SornaCodeRunnerView = require './sorna-code-runner-view'
+AtomLiveCodeRunnerView = require './atom-live-code-runner-view'
 {CompositeDisposable} = require 'atom'
 crypto = require 'crypto'
 util = require 'util'
 
-module.exports = SornaCodeRunner =
+module.exports = AtomLiveCodeRunner =
   config: require('./config.coffee')
-  SornaCodeRunnerView: null
+  AtomLiveCodeRunnerView: null
   resultPanel: null
   subscriptions: null
   code: null
@@ -25,7 +25,7 @@ module.exports = SornaCodeRunner =
 
   # dev mode for autoreload-package-service
   consumeAutoreload: (reloader) ->
-    reloader(pkg:"sorna-code-runner",files:["package.json"],folders:["lib/"])
+    reloader(pkg:"atom-live-code-runner",files:["package.json"],folders:["lib/"])
 
   activate: (state) ->
     if atom.inDevMode()
@@ -41,8 +41,8 @@ module.exports = SornaCodeRunner =
     @subscriptions.dispose()
 
   realActivate: (state) ->
-    @SornaCodeRunnerView = new SornaCodeRunnerView(state.SornaCodeRunnerViewState, @)
-    @resultPanel = atom.workspace.addBottomPanel(item: @SornaCodeRunnerView.getElement(), visible: false)
+    @AtomLiveCodeRunnerView = new AtomLiveCodeRunnerView(state.AtomLiveCodeRunnerViewState, @)
+    @resultPanel = atom.workspace.addBottomPanel(item: @AtomLiveCodeRunnerView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
@@ -50,19 +50,19 @@ module.exports = SornaCodeRunner =
 
     # Register command
     @subscriptions.add atom.commands.add 'atom-text-editor',
-      'sorna-code-runner:run': => @runcode()
+      'atom-live-code-runner:run': => @runcode()
 
   serialize: ->
-    SornaCodeRunnerViewState: @SornaCodeRunnerView.serialize()
+    AtomLiveCodeRunnerViewState: @AtomLiveCodeRunnerView.serialize()
 
   getAccessKey: ->
-    accessKey = atom.config.get 'sorna-code-runner.accessKey'
+    accessKey = atom.config.get 'atom-live-code-runner.accessKey'
     if accessKey
       accessKey = accessKey.trim()
     return accessKey
 
   getSecretKey: ->
-    secretKey = atom.config.get 'sorna-code-runner.secretKey'
+    secretKey = atom.config.get 'atom-live-code-runner.secretKey'
     if secretKey
       secretKey = secretKey.trim()
     return secretKey
@@ -79,7 +79,7 @@ module.exports = SornaCodeRunner =
 
   notifyMissingMandatorySettings: (missingSettings) ->
     context = this
-    errorMsg = "sorna-code-runner: Please input following settings: " + missingSettings.join(', ')
+    errorMsg = "atom-live-code-runner: Please input following settings: " + missingSettings.join(', ')
 
     notification = atom.notifications.addInfo errorMsg,
       dismissable: true
@@ -91,7 +91,7 @@ module.exports = SornaCodeRunner =
       }]
 
   goToPackageSettings: ->
-    atom.workspace.open("atom://config/packages/sorna-code-runner")
+    atom.workspace.open("atom://config/packages/atom-live-code-runner")
 
   runcode: ->
     if @resultPanel.isVisible()
@@ -99,7 +99,7 @@ module.exports = SornaCodeRunner =
     else
       editor = atom.workspace.getActiveTextEditor()
       content = editor.getText()
-      @SornaCodeRunnerView.setContent(content)
+      @AtomLiveCodeRunnerView.setContent(content)
     @sendCode()
 
   getAPIversion: ->
@@ -125,11 +125,11 @@ module.exports = SornaCodeRunner =
 
   createKernel: (kernelType) ->
     parentObj = @
-    msg = "sorna-code-runner: preparing kernel..."
+    msg = "atom-live-code-runner: preparing kernel..."
     notification = atom.notifications.addInfo msg
     requestBody =
       "lang": kernelType,
-      "clientSessionToken": "test-sorna-code-runner",
+      "clientSessionToken": "test-atom-live-code-runner",
       "resourceLimits":
         "maxMem": 0,
         "timeout": 0
@@ -137,14 +137,14 @@ module.exports = SornaCodeRunner =
     return fetch(@baseURL + '/v1/kernel/create', requestInfo)
       .then( (response) ->
         if response.ok is false
-          errorMsg = "sorna-code-runner: " + response.statusText
+          errorMsg = "atom-live-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg, dismissable: true
           return false
         else if response.status is 201
           response.json().then( (json) ->
             console.debug "Kernel ID: " + json.kernelId
             parentObj.kernelId = json.kernelId
-            msg = "sorna-code-runner: kernel prepared."
+            msg = "atom-live-code-runner: kernel prepared."
             notification = atom.notifications.addSuccess msg
             setTimeout ->
               notification.dismiss()
@@ -155,14 +155,14 @@ module.exports = SornaCodeRunner =
       )
 
   destroyKernel: (kernelId) ->
-    msg = "sorna-code-runner: destroying kernel..."
+    msg = "atom-live-code-runner: destroying kernel..."
     notification = atom.notifications.addInfo msg
     requestInfo = @newRequest('DELETE', '/v1/kernel/'+kernelId, null)
     return fetch(@baseURL + '/v1/kernel/'+kernelId, requestInfo)
       .then( (response) ->
         if response.ok is false
           if response.status isnt 404
-            errorMsg = "sorna-code-runner: destroy failed - " + response.statusText
+            errorMsg = "atom-live-code-runner: destroy failed - " + response.statusText
             notification = atom.notifications.addError errorMsg,
               dismissable: true
             return false
@@ -174,18 +174,18 @@ module.exports = SornaCodeRunner =
       )
 
   refreshKernel: ->
-    msg = "sorna-code-runner: refreshing kernel..."
+    msg = "atom-live-code-runner: refreshing kernel..."
     notification = atom.notifications.addInfo msg
     requestInfo = @newRequest('PATCH', '/v1/kernel/'+@kernelId, null)
     fetch(@baseURL + '/v1/kernel/'+@kernelId, requestInfo)
       .then( (response) ->
         if response.ok is false
-          errorMsg = "sorna-code-runner: " + response.statusText
+          errorMsg = "atom-live-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg,
             dismissable: true
         else
           if response.status isnt 404
-            msg = "sorna-code-runner: kernel refreshed"
+            msg = "atom-live-code-runner: kernel refreshed"
             notification = atom.notifications.addSuccess msg
         return true
       , (e) ->
@@ -246,7 +246,7 @@ module.exports = SornaCodeRunner =
   sendCode: ->
     kernelType = @chooseKernelType()
     if kernelType is null
-      errorMsg = "sorna-code-runner: language is not specified by Atom."
+      errorMsg = "atom-live-code-runner: language is not specified by Atom."
       notification = atom.notifications.addError errorMsg, dismissable: true,
       description: 'Check the grammar indicator at bottom bar and make sure that it is correctly recoginzed (NOT `Plain Text`).\nTry one of the followings:\n * Save current editor with proper file extension.\n * Install extra lauguage support package. (e.g. `language-r`, `language-haskell`)'
       return false
@@ -272,7 +272,7 @@ module.exports = SornaCodeRunner =
             return @sendCode()
         )
         return true
-    msg = "sorna-code-runner: running..."
+    msg = "atom-live-code-runner: running..."
     notification = atom.notifications.addInfo msg, dismissable: false
     editor = atom.workspace.getActiveTextEditor()
     @code = editor.getText()
@@ -284,12 +284,12 @@ module.exports = SornaCodeRunner =
     fetch(@baseURL + '/v1/kernel/' + @kernelId, requestInfo)
       .then( (response) =>
         if response.ok is false
-          errorMsg = "sorna-code-runner: " + response.statusText
+          errorMsg = "atom-live-code-runner: " + response.statusText
           notification = atom.notifications.addError errorMsg, dismissable: false
           if response.status is 404
             @createKernel(@kernelType)
         else
-          msg = "sorna-code-runner: completed."
+          msg = "atom-live-code-runner: completed."
           notification = atom.notifications.addSuccess msg, dismissable: false
           response.json().then( (json) =>
             buffer = ''
@@ -303,8 +303,8 @@ module.exports = SornaCodeRunner =
               errBuffer = ''
               for exception in json.result.exceptions
                 errBuffer = errBuffer + exception[0] + '(' + exception[1].join(', ') + ')'
-              @SornaCodeRunnerView.setErrorMessage(errBuffer)
-            @SornaCodeRunnerView.setContent(buffer)
+              @AtomLiveCodeRunnerView.setErrorMessage(errBuffer)
+            @AtomLiveCodeRunnerView.setContent(buffer)
             @resultPanel.show()
           )
         setTimeout ->

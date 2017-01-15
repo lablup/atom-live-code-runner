@@ -4,15 +4,15 @@ class SornaCodeRunnerView
     @caller = caller
     # Create root element
     @element = document.createElement('div')
-    @element.classList.add('sorna-code-runner')
+    @element.classList.add('atom-live-code-runner')
 
     # Create message element
     consoleMessage = document.createElement('div')
-    consoleMessage.classList.add('sorna-code-runner-console-message')
+    consoleMessage.classList.add('atom-live-code-runner-console-message')
     @element.appendChild(consoleMessage)
 
     errorMessage = document.createElement('div')
-    errorMessage.classList.add('sorna-code-runner-error-message')
+    errorMessage.classList.add('atom-live-code-runner-error-message')
     @element.appendChild(errorMessage)
 
     message = document.createElement('div')
@@ -21,7 +21,7 @@ class SornaCodeRunnerView
 
 
     buttonArea = document.createElement('div')
-    buttonArea.classList.add('sorna-code-runner-buttons')
+    buttonArea.classList.add('atom-live-code-runner-buttons')
     closeButton = document.createElement('span')
     closeButton.addEventListener('click', @closeView.bind(@))
     closeButton.classList.add('icon')

@@ -1,15 +1,15 @@
-# sorna-code-runner
+# atom-live-code-runner
 
 ATOM package to run code snippets via Sorna Cloud API server (https://cloud.sorna.io)
 
 Description
 ===========
 
- `sorna-code-runner` is ATOM editor package to add remote code execution feature using [Sorna Cloud API Service](https://cloud.sorna.io). `sorna-code-runner` uses [Sorna framework](http://sorna.io) and [Sorna API](http://docs.sorna.io)). Currently, Sorna supports 11 programming languages now.
+ `atom-live-code-runner` is ATOM editor package to add remote code execution feature using [Sorna Cloud API Service](https://cloud.sorna.io). `atom-live-code-runner` uses [Sorna framework](http://sorna.io) and [Sorna API](http://docs.sorna.io)). Currently, Sorna supports 11 programming languages now.
 
 You can run your code (or code snippet) without installing or setting any programming environment  with this package. All you need to run code is
 
- * Install `sorna-code-runner` package.
+ * Install `atom-live-code-runner` package.
  * Get Sorna API access / secret key at [Sorna Cloud API](https://cloud.sorna.io)
  * Type your keys on package preferences page.
  * You are ready to go!
@@ -20,13 +20,13 @@ You can run your code (or code snippet) without installing or setting any progra
 How-to
 ======
 
- 1. Search and install `sorna-code-runner` via preferences - install.
+ 1. Search and install `atom-live-code-runner` via preferences - install.
  2. Get your own API key pair (API key / Secret key) at [Sorna Cloud API Service](https://cloud.sorna.io)
- 3. Type your API key pair on preferences page (preferences - packages - sorna-code-runner)
+ 3. Type your API key pair on preferences page (preferences - packages - atom-live-code-runner)
  4. Write your code on editor.
  5. Run code by
   * Choose `Run code via Sorna` at context menu
-  * Type `sorna` and choose `sorna-code-runner: Run` at command palette.
+  * Type `sorna` and choose `atom-live-code-runner: Run` at command palette.
  6. Execution result will be shown at bottom pane.
 
 Supported Languages on this package
