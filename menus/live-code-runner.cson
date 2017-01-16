@@ -1,8 +1,8 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Run code via Sorna'
-      'command': 'atom-live-code-runner:run'
+      'label': 'Run code on Sorna'
+      'command': 'live-code-runner:run'
     }
   ]
 'menu': [
@@ -12,8 +12,8 @@
       'label': 'Live Code runner'
       'submenu': [
         {
-          'label': 'Run code via Sorna'
-          'command': 'atom-live-code-runner:run'
+          'label': 'Run code on Sorna'
+          'command': 'live-code-runner:run'
         }
       ]
     ]
