@@ -8,11 +8,31 @@
   border-bottom: 1px solid #ccc;
 }
 
+.atom-live-code-runner-console-message::before {
+  content:'console';
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom-right-radius: 3px;
+  color: #222;
+  font-size:10px;
+}
+
 .atom-live-code-runner-error-message {
   background-color: #cc4444;
   color: #eeeeee;
   font-family: monospace;
 }
+
+.atom-live-code-runner-result::before {
+  content:'result';
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom-right-radius: 3px;
+  font-family: monospace;
+  color: #222;
+  font-size:10px;
+}
+
 
 .atom-live-code-runner-buttons {
   width: 60px;
