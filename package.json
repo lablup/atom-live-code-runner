@@ -1,5 +1,5 @@
 {
-  "name": "atom-live-code-runner",
+  "name": "live-code-runner",
   "main": "./lib/atom-live-code-runner",
   "version": "2.1.5",
   "description": "Run program code via Sorna Cloud API service (https://cloud.sorna.io)",
