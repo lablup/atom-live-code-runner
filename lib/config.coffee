@@ -1,3 +1,5 @@
+'use babel'
+
 module.exports =
   accessKey:
     description: 'Access API Key'

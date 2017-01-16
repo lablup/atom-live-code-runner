@@ -1,0 +1,32 @@
+.atom-live-code-runner {
+  max-height:300px;
+  overflow:scroll;
+}
+
+.atom-live-code-runner-console-message {
+  font-family: monospace;
+  border-bottom: 1px solid #ccc;
+}
+
+.atom-live-code-runner-error-message {
+  background-color: #cc4444;
+  color: #eeeeee;
+  font-family: monospace;
+}
+
+.atom-live-code-runner-buttons {
+  width: 60px;
+  height: 24px;
+  position:absolute;
+  top: 0;
+  right: 0;
+  background-color: white;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-bottom-left-radius: 5px;
+  display: flex;
+}
+.atom-live-code-runner-buttons .icon {
+  margin-left: 10px;
+  font-size: 16px!important;
+}
