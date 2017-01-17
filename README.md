@@ -24,7 +24,7 @@ How-to
  3. Type your API key pair on preferences page (preferences - packages - live-code-runner)
  4. Write your code on editor.
  5. Run code by
-  * Choose `Run code via Sorna` at context menu
+  * Choose `Run code on Sorna` at context menu
   * Type `sorna` and choose `live-code-runner: Run` at command palette.
  6. Execution result will be shown at bottom pane.
 
