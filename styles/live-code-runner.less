@@ -42,6 +42,15 @@
   overflow: scroll;
 }
 
+.live-code-runner-result atom-text-editor[mini]::before {
+  content:'> ';
+  padding-right: 5px;
+}
+
+.live-code-runner-result atom-text-editor[mini] {
+  background-color: transparent;
+}
+
 .live-code-runner-buttons {
   max-width: 210px;
   height: 24px;
