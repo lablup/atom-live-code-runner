@@ -1,2 +1,5 @@
 'atom-workspace':
   'ctrl-alt-r': 'live-code-runner:run'
+
+'.live-code-runner-result atom-text-editor[mini]':
+  'enter': 'live-code-runner:run'
