@@ -6,7 +6,6 @@
 
 .live-code-runner-console-message {
   font-family: monospace;
-  border-bottom: 1px solid @pane-item-border-color;
   max-height: 80px;
   overflow-y: scroll;
 }
@@ -23,8 +22,7 @@
 }
 
 .live-code-runner-error-message {
-  background-color: #cc4444;
-  color: #eeeeee;
+  color: @text-color-error;
   font-family: monospace;
 }
 
@@ -39,6 +37,7 @@
 }
 
 .live-code-runner-result {
+  border-top: 1px solid @pane-item-border-color;
   overflow: scroll;
 }
 
