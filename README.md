@@ -30,7 +30,7 @@ You can run your code (or code snippet) without installing or setting any progra
 
  * Python 2.7
  * Python 3.6
- * TensorFlow 0.12
+ * TensorFlow 1.0 
  * Theano 0.8
  * Keras 1.2
  * PHP 7
