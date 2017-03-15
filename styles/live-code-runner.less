@@ -38,9 +38,14 @@
 
 .live-code-runner-result {
   border-top: 1px solid @pane-item-border-color;
+  font-family: monospace;
   overflow: scroll;
 }
-
+.live-code-runner-result pre {
+  margin: 0 0 0 5px;
+  padding: 0;
+  font-family: monospace;
+}
 .live-code-runner-result atom-text-editor[mini]::before {
   content:'> ';
   padding-right: 5px;
