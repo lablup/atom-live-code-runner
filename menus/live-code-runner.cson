@@ -1,7 +1,7 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Run code on Sorna'
+      'label': 'Run code on Backend.AI Cloud'
       'command': 'live-code-runner:run'
     }
   ]
@@ -12,7 +12,7 @@
       'label': 'Live Code runner'
       'submenu': [
         {
-          'label': 'Run code on Sorna'
+          'label': 'Run code on Backend.AI Cloud'
           'command': 'live-code-runner:run'
         }
       ]

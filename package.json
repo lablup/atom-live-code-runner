@@ -2,7 +2,7 @@
   "name": "live-code-runner",
   "main": "./lib/live-code-runner",
   "version": "3.1.0",
-  "description": "Run program code via Sorna Cloud API service (https://cloud.sorna.io)",
+  "description": "Run program code via Backend.AI Cloud service (https://cloud.backend.ai)",
   "repository": "https://github.com/lablup/atom-live-code-runner",
   "license": "MIT",
   "engines": {

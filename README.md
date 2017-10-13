@@ -1,15 +1,15 @@
 # live-code-runner
 
-ATOM editor package to run code snippets via Sorna Cloud API server (https://cloud.sorna.io)
+ATOM editor package to run code snippets via Backend.AI Cloud server (https://cloud.backend.ai)
 
 ## Description
 
- `live-code-runner` is ATOM editor package to add remote code execution feature using [Sorna Cloud API Service](https://cloud.sorna.io). `live-code-runner` uses [Sorna framework](http://sorna.io) and [Sorna API](http://docs.sorna.io). Currently, Sorna supports 11 programming languages now.
+ `live-code-runner` is ATOM editor package to add remote code execution feature using [Backend.AI Cloud Service](https://cloud.backend.ai). `live-code-runner` uses [Backend.AI framework](https://www.lablup.ai/#/ground) and [Backend.AI API](http://docs.sorna.io). Currently, Backend.AI supports 15 programming languages now.
 
 You can run your code (or code snippet) without installing or setting any programming environment  with this package. All you need to run code is
 
  * Install `live-code-runner` package.
- * Get Sorna API access / secret key at [Sorna Cloud API](https://cloud.sorna.io)
+ * Get Backend.AI Cloud API access / secret key at [Backend.AI Cloud](https://cloud.sorna.io)
  * Type your keys on package preferences page.
  * You are ready to go!
 
@@ -18,21 +18,22 @@ You can run your code (or code snippet) without installing or setting any progra
 ## How-to
 
  1. Search and install `live-code-runner` via preferences - install.
- 2. Get your own API key pair (API key / Secret key) at [Sorna Cloud API Service](https://cloud.sorna.io)
+ 2. Get your own API key pair (API key / Secret key) at [Backend.AI Cloud Service](https://cloud.backend.ai)
  3. Type your API key pair on preferences page (preferences - packages - live-code-runner)
  4. Write your code on editor.
  5. Run code by
-  * Choose `Run code on Sorna` at context menu
-  * Type `sorna` and choose `live-code-runner: Run` at command palette.
+  * Choose `Run code on Backend.AI Cloud` at context menu
+  * Type `backend` and choose `live-code-runner: Run` at command palette.
  6. Execution result will be shown at bottom pane.
 
 ### Supported Languages / frameworks on this package
 
  * Python 2.7
  * Python 3.6
- * TensorFlow 1.0 
+ * TensorFlow 1.2
  * Theano 0.8
- * Keras 1.2
+ * Keras 2.0
+ * C / C++ (via gcc)
  * PHP 7
  * Javascript (via V8 engine)
  * Node.js 4
@@ -47,7 +48,6 @@ You can run your code (or code snippet) without installing or setting any progra
  * Rust
  * Swift (via Swift opensource version)
  * Caffe
- * C++ (via gcc)
 
 ## Troubleshooting
 
