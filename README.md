@@ -4,12 +4,12 @@ ATOM editor package to run code snippets via Backend.AI Cloud server (https://cl
 
 ## Description
 
- `live-code-runner` is ATOM editor package to add remote code execution feature using [Backend.AI Cloud Service](https://cloud.backend.ai). `live-code-runner` uses [Backend.AI framework](https://www.lablup.ai/#/ground) and [Backend.AI API](http://docs.sorna.io). Currently, Backend.AI supports 15 programming languages now.
+ `live-code-runner` is ATOM editor package to add remote code execution feature using [Backend.AI Cloud Service](https://cloud.backend.ai). `live-code-runner` uses [Backend.AI framework](https://www.lablup.ai/#/ground) and [Backend.AI API](http://docs.backend.ai). Currently, Backend.AI supports 15 programming languages now.
 
 You can run your code (or code snippet) without installing or setting any programming environment  with this package. All you need to run code is
 
  * Install `live-code-runner` package.
- * Get Backend.AI Cloud API access / secret key at [Backend.AI Cloud](https://cloud.sorna.io)
+ * Get Backend.AI Cloud API access / secret key at [Backend.AI Cloud](https://cloud.backend.ai)
  * Type your keys on package preferences page.
  * You are ready to go!
 
@@ -28,26 +28,33 @@ You can run your code (or code snippet) without installing or setting any progra
 
 ### Supported Languages / frameworks on this package
 
- * Python 2.7
- * Python 3.6
- * TensorFlow 1.2
- * Theano 0.8
- * Keras 2.0
- * C / C++ (via gcc)
- * PHP 7
- * Javascript (via V8 engine)
- * Node.js 4
- * R 3
- * Octave 4.2
- * Julia
- * haskell
- * Lua 5
+| Language      | Version | Batch | Query | Input Hook | TTY | ETC |
+|---------------|------|---|---|---|---|-------------------|
+| C             | 6.3  | O | O | O |   | GCC compiler      |
+| C++ (C+14)    | 6.3  | O | O | O |   | GCC compiler      |
+| Go            | 1.9  | O | O |   |   |                   |
+| Haskell       | 8.2  | O | O |   |   |                   |
+| Java          | 8.0  | O | O |   |   |                   |
+| Linux Console | -    |   | O | O | O | Not supported in this plugin (Soon!) |  
+| Node.js       | 6    |   | O |   |   |                   |
+| Octave        | 4.2  |   | O |   |   |                   |
+| Python        | 2.7  | O | O | O |   |                   |
+| Python        | 3.6  | O | O | O |   |                   |
+| Rust          | 1.21 | O | O |   |   |                   |
+| PHP           | 7.0  |   | O |   |   |                   |
+| R             | 3.0  |   | O |   |   | CRAN R            |
+
+| Deep-Learning Framework | Version | Batch | Query | Input Hook | TTY | ETC |
+|---------------|------|---|---|---|---|-------------------|
+| TensorFlow    | 1.4  | O | O | O |   | Bundled w/Keras 2 |
+| PyTorch       | 0.2  | O | O | O |   |                   |
+| Theano        | 0.9  | O | O | O |   | Bundled w/Keras 2 |
+| CNTK          |(WIP) | O | O | O |   | Bundled w/Keras 2 |
 
 ### Languages (to be ready soon)
 
- * Rust
  * Swift (via Swift opensource version)
- * Caffe
+ * Caffe 2
 
 ## Troubleshooting
 
