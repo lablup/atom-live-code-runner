@@ -5,7 +5,7 @@
   "description": "Run program code via Backend.AI Cloud service (https://cloud.backend.ai)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lablup/atom-live-code-runner.git"
+    "url": "git@github.com:lablup/atom-live-code-runner.git"
   },
   "license": "MIT",
   "engines": {
