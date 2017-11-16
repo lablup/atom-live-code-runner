@@ -3,7 +3,10 @@
   "main": "./lib/live-code-runner",
   "version": "3.2.0",
   "description": "Run program code via Backend.AI Cloud service (https://cloud.backend.ai)",
-  "repository": "https://github.com/lablup/atom-live-code-runner",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/atom-live-code-runner.git"
+  },
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
