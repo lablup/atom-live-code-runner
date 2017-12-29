@@ -1,6 +1,6 @@
 # live-code-runner
 
-ATOM editor package to run code snippets via Backend.AI Cloud server (https://cloud.backend.ai)
+ATOM editor package to run code snippets via Backend.AI Cloud server (https://cloud.backend.ai) or on-premise Backend.AI server.
 
 ## Description
 
@@ -18,7 +18,7 @@ You can run your code (or code snippet) without installing or setting any progra
 ## How-to
 
  1. Search and install `live-code-runner` via preferences - install.
- 2. Get your own API key pair (API key / Secret key) at [Backend.AI Cloud Service](https://cloud.backend.ai)
+ 2. Get your own API key pair (API key / Secret key) at [Backend.AI Cloud Service](https://cloud.backend.ai). If you have set up your own Backend.AI on-premise server, you can your own server endpoint and API key set.
  3. Type your API key pair on preferences page (preferences - packages - live-code-runner)
  4. Write your code on editor.
  5. Run code by
