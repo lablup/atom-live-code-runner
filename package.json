@@ -1,7 +1,7 @@
 {
   "name": "live-code-runner",
   "main": "./lib/live-code-runner",
-  "version": "5.2.1",
+  "version": "5.3.0",
   "description": "Run program code via Backend.AI cloud service (https://cloud.backend.ai) or Backend.AI on-premise server.",
   "repository": {
     "type": "git",
